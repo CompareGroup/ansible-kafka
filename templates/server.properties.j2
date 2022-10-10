@@ -15,13 +15,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+### Deprecated ###
 # This configuration file is intended for use in ZK-based mode, where Apache ZooKeeper is required.
 # See kafka.server.KafkaConfig for additional details and defaults
 
 ############################# Server Basics #############################
 
+# The role of this server. Setting this puts us in KRaft mode
+process.roles=broker,controller
+
+# The node id associated with this instance's roles
+node.id={{ kafka_node_id }}
+
+# The connect string for the controller quorum
+# controller.quorum.voters=1@localhost:9093
+# controller.quorum.voters=1@localhost:9092,2@localhost:9093,3@localhost:9094
+#controller.quorum.voters={% for node in kafka_service_ips -%}
+#{% if loop.index == loop.length -%}
+#{{ node.split('.')[3] }}@{{ node }}:9093
+#{% else %}
+#{{ node.split('.')[3] }}@{{ node }}:9093,
+#{%- endif %}
+#{%- endfor %}
+
+# The connect string for the controller quorum
+# controller.quorum.voters=1@localhost:9093
+# controller.quorum.voters=1@localhost1:9093,2@localhost2:9093,3@localhost3:9093
+controller.quorum.voters={{ kafka_controller_quorum }}
+
 # The id of the broker. This must be set to a unique integer for each broker.
-broker.id={{ kafka_broker_id }}
+#broker.id={{ kafka_node_id }}
 
 # Enable auto creation of topic on the server
 auto.create.topics.enable={{ kafka_auto_create_topics_enable }}
@@ -46,6 +69,7 @@ background.threads={{ kafka_background_threads }}
 #     listeners = PLAINTEXT://your.host.name:9092
 #listeners=PLAINTEXT://:9092
 listeners={{ kafka_listeners | join(",")}}
+inter.broker.listener.name=PLAINTEXT
 
 # Listener name, hostname and port the broker will advertise to clients.
 # If not set, it uses the value for "listeners".
@@ -54,8 +78,12 @@ listeners={{ kafka_listeners | join(",")}}
 advertised.listeners={{ kafka_advertised_listeners | join(",")}}
 {% endif %}
 
+# Listener, host name, and port for the controller to advertise to the brokers. If
+# this server is a controller, this listener must be configured.
+controller.listener.names=CONTROLLER
+
 # Maps listener names to security protocols, the default is for them to be the same. See the config documentation for more details
-#listener.security.protocol.map=PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
+listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
 
 # The number of threads that the server uses for receiving requests from the network and sending responses to the network
 num.network.threads={{ kafka_num_network_threads }}
@@ -147,7 +175,7 @@ log.retention.check.interval.ms={{ kafka_log_retention_check_interval_ms }}
 # server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
 # You can also append an optional chroot string to the urls to specify the
 # root directory for all kafka znodes.
-zookeeper.connect={{ kafka_zookeeper_connect }}
+#zookeeper.connect={{ kafka_zookeeper_connect }}
 
 ############################# Timeout #############################
 

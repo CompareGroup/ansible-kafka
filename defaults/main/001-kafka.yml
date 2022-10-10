@@ -23,9 +23,14 @@ kafka_start: yes
 kafka_restart: yes
 
 ############################# Server #############################
+#
+kafka_cluster_id: "" # output from /bin/kafka-storage.sh random-uuid
 
 # The id of the broker. This must be set to a unique integer for each broker.
-kafka_broker_id: 0
+kafka_node_role: "broker,controller"
+
+kafka_node_id: 0
+kafka_controller_quorum: 0@localhost:9093
 
 # The Java heap size (memory) allocation (xmx, xms)
 kafka_java_heap: "-Xms1G -Xmx1G"

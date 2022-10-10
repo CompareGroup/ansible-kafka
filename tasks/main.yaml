@@ -126,15 +126,36 @@
   tags:
     - kafka_config
 
-- name: Template configuration file to zookeeper.properties
-  template:
-    src: zookeeper.properties.j2
-    dest: '{{ kafka_dir }}/config/zookeeper.properties'
-    group: '{{ kafka_group }}'
-    owner: '{{ kafka_user }}'
-    mode: 0644
+
+- name: check if kraft logs dir has been initialized
+  shell: "{{ kafka_dir }}/bin/kafka-storage.sh info -c {{ kafka_dir }}/config/server.properties"
+  register: storage_init
+  ignore_errors: yes
   tags:
     - kafka_config
+
+- name: generate kafka cluster id
+  shell: "{{ kafka_dir }}/bin/kafka-storage.sh info -c {{ kafka_dir }}/config/server.properties"
+  register: storage_init
+  ignore_errors: yes
+  tags:
+    - kafka_config
+
+- name: init kraft logs dir
+  shell: "{{ kafka_dir }}/bin/kafka-storage.sh format -t {{ kafka_cluster_id }} -c {{ kafka_dir }}/config/server.properties"
+  when: '"is not formatted" in storage_init.stdout'
+  tags:
+    - kafka_config
+
+#- name: Template configuration file to zookeeper.properties
+#  template:
+#    src: zookeeper.properties.j2
+#    dest: '{{ kafka_dir }}/config/zookeeper.properties'
+#    group: '{{ kafka_group }}'
+#    owner: '{{ kafka_user }}'
+#    mode: 0644
+#  tags:
+#    - kafka_config
 
 - name: Template configuration file to connect-standalone.properties
   template:

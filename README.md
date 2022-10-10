@@ -23,15 +23,20 @@ elastically scaled with no downtime.
 
 ## Requirements
 
-- [Apache ZooKeeper]
+[comment]: <> (- [Apache ZooKeeper])
 - Java 8 (deprecated) / 11 / 17
 
-The below Apache ZooKeeper role from Ansible Galaxy can be used if one is
-needed.
+[comment]: <> (### It uses KRaft now and so zookeeper is not needed anymore)
 
-```sh
-ansible-galaxy install sleighzy.zookeeper
-```
+[comment]: <> (The below Apache ZooKeeper role from Ansible Galaxy can be used if one is)
+
+[comment]: <> (needed.)
+
+[comment]: <> (```sh)
+
+[comment]: <> (ansible-galaxy install comparegroup.zookeeper)
+
+[comment]: <> (```)
 
 Ansible 2.9.16 or 2.10.4 are the minimum required versions to workaround an
 issue with certain kernels that have broken the `systemd` status check. The
@@ -56,7 +61,8 @@ See <https://github.com/ansible/ansible/issues/71528> for more information.
 | kafka_start                                    | yes                              |
 | kafka_restart                                  | yes                              |
 | kafka_log_dir                                  | /var/log/kafka                   |
-| kafka_broker_id                                | 0                                |
+| kafka_cluster_id                               | ""                               |
+| kafka_node_id                                  | 0                                |
 | kafka_java_heap                                | -Xms1G -Xmx1G                    |
 | kafka_background_threads                       | 10                               |
 | kafka_listeners                                | PLAINTEXT://:9092                |
@@ -81,8 +87,10 @@ See <https://github.com/ansible/ansible/issues/71528> for more information.
 | kafka_delete_topic_enable                      | true                             |
 | kafka_default_replication_factor               | 1                                |
 | kafka_group_initial_rebalance_delay_ms         | 0                                |
-| kafka_zookeeper_connect                        | localhost:2181                   |
-| kafka_zookeeper_connection_timeout             | 6000                             |
+
+[comment]: <> (| kafka_zookeeper_connect                        | localhost:2181                   |)
+
+[comment]: <> (| kafka_zookeeper_connection_timeout             | 6000                             |)
 | kafka_bootstrap_servers                        | localhost:9092                   |
 | kafka_consumer_group_id                        | kafka-consumer-group             |
 
@@ -103,7 +111,8 @@ log4j-related available variables.
 
 | Property                       | Value                |
 | ------------------------------ | -------------------- |
-| ZooKeeper connection           | localhost:2181       |
+
+[comment]: <> (| ZooKeeper connection           | localhost:2181       |)
 | Kafka bootstrap servers        | localhost:9092       |
 | Kafka consumer group ID        | kafka-consumer-group |
 | Kafka broker ID                | 0                    |
@@ -136,7 +145,7 @@ Add the below to a playbook to run those role against hosts belonging to the
 ```yaml
 - hosts: kafka-nodes
   roles:
-    - sleighzy.kafka
+    - comparegroup.kafka-ansible
 ```
 
 ## Linting
