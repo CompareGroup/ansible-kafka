@@ -22,21 +22,11 @@
 ############################# Server Basics #############################
 
 # The role of this server. Setting this puts us in KRaft mode
-process.roles=broker,controller
+process.roles={{ kafka_node_role }}
 
 # The node id associated with this instance's roles
 node.id={{ kafka_node_id }}
 
-# The connect string for the controller quorum
-# controller.quorum.voters=1@localhost:9093
-# controller.quorum.voters=1@localhost:9092,2@localhost:9093,3@localhost:9094
-#controller.quorum.voters={% for node in kafka_service_ips -%}
-#{% if loop.index == loop.length -%}
-#{{ node.split('.')[3] }}@{{ node }}:9093
-#{% else %}
-#{{ node.split('.')[3] }}@{{ node }}:9093,
-#{%- endif %}
-#{%- endfor %}
 
 # The connect string for the controller quorum
 # controller.quorum.voters=1@localhost:9093
@@ -73,10 +63,12 @@ inter.broker.listener.name=PLAINTEXT
 
 # Listener name, hostname and port the broker will advertise to clients.
 # If not set, it uses the value for "listeners".
-#advertised.listeners=PLAINTEXT://your.host.name:9092
+# advertised.listeners=PLAINTEXT://your.host.name:9092
 {% if kafka_advertised_listeners is defined %}
 advertised.listeners={{ kafka_advertised_listeners | join(",")}}
 {% endif %}
+
+#advertised.listeners={{ kafka_advertised_listener_protocol }}://{{ kafka_advertised_listener_hostname }}:{{ kafka_advertised_listener_port }}
 
 # Listener, host name, and port for the controller to advertise to the brokers. If
 # this server is a controller, this listener must be configured.
