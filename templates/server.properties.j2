@@ -29,8 +29,6 @@ node.id={{ kafka_node_id }}
 
 
 # The connect string for the controller quorum
-# controller.quorum.voters=1@localhost:9093
-# controller.quorum.voters=1@localhost1:9093,2@localhost2:9093,3@localhost3:9093
 controller.quorum.voters={{ kafka_controller_quorum }}
 
 # The id of the broker. This must be set to a unique integer for each broker.
