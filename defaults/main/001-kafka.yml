@@ -57,6 +57,10 @@ kafka_advertised_listeners:
 #   - "SASL_SSL://:9094"
 #   - "PLAINTEXT://:9092"
 
+kafka_listener_protocol: PLAINTEXT
+kafka_listener_hostname: localhost
+kafka_listener_port: 9092
+
 # The number of threads handling network requests
 kafka_num_network_threads: 3
 # The number of threads that the server uses for processing requests, which may include disk I/O
